@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Linux Tutorial</title>
+  </head>
+  <body>
+    <h1>Linux Tutorial</h1>
+    <h2>1. Set up Ubuntu Server</h2>
+    <p>
+      Go to <a href="https://www.ubuntu.com/server">https://www.ubuntu.com/server</a> and download the latest version of Ubuntu Server.
+      Create a bootable USB with the image and boot off of it.
+      Follow the set up guide.
+      When you reach the Software selection part pick LAMP server, standard system utilities and OpenSSH server.
+      Install updates with
+      <pre>
+        sudo apt-get update
+        sudo apt-get upgrade
+      </pre>
+    </p>
+
+    <h2>2. Setting up a Docker container</h2>
+    <p>
+      Start by intalling Docker with
+      <pre>
+        sudo apt-get install docker.io
+        sudo usermod -aG docker $(whoami)
+      </pre>
+      And then reboot your machine.
+      Now get the <code>httpd</code> repository.
+      <pre>
+        docker pull httpd
+      </pre>
+      And to create a container running apache.
+      <pre>
+        docker run -d -p 80:80 --name website -v /path/to/html_files:/usr/local/apache2/htdocs/ httpd:2.4
+      </pre>
+      You can now test to see if it worked by going to your IP Address in your browser.
+    </p>
+    <h2>3. Install and set up MySQL and phpMyAdmin</h2>
+    <p>
+      Start by installing MySQL with:
+      <pre>
+        sudo apt-get install mysql
+      </pre>
+      Then secure MySQL by running this command:
+      <pre>
+        sudo mysql_secure_installation
+      </pre>
+      Just follow the steps and you should do ok.
+      <br>
+      Now we have to install phpMyAdmin.
+      What phpMyAdmin does is give you a graphical interface for MySQL which you can view in your browser.
+      Now lets start by installing phpMyAdmin:
+      <pre>
+        sudo apt-get install phpmyadmin apache2-utils
+      </pre>
+      Select Apache2 for the server.
+      Choose yes when asked about wether to configure the database for phpMyAdmin with dbconfig-common
+      Enter the MySQL password when needed
+      Choose a password for phpMyAdmin
+      Next you need to add phpMyadmin to the apache configuration file
+      <pre>
+        sudo nano /etc/apache2/apache2.conf
+      </pre>
+      And add this line
+      <pre>
+        Include /etc/phpmyadmin/apache.conf
+      </pre>
+      Now you need to restart apache
+      <pre>
+        sudo service apache2 restart
+      </pre>
+      You should then be able to acces phpMyAdmin by going to <code>yourip/phpmyadmin</code>
+      <h3>Securing phpMyAdmin - Optional</h3>
+      <p>
+        First you need to set up the .htaccess file
+        <pre>
+          sudo nano /etc/phpmyadmin/apache.conf
+        </pre>
+        Under the directory section, add the line “AllowOverride All” under “Directory Index”, making the section look like this:
+        <pre>
+          &lt;Directory /usr/share/phpmyadmin&gt;
+                  Options FollowSymLinks
+                  DirectoryIndex index.php
+                  AllowOverride All
+                  [...]
+        </pre>
+        Now you need to configure the .htaccess file
+        First you need to create it.
+        <pre>
+          sudo nano /usr/share/phpmyadmin/.htaccess
+        </pre>
+        Now add this lines to the file
+        <pre>
+          AuthType Basic
+          AuthName "Restricted Files"
+          AuthUserFile /etc/apache2/.phpmyadmin.htpasswd
+          Require valid-user
+        </pre>
+        Now you need to create the htpasswd file.
+        Replace "username" with whatever you like.
+        <pre>
+          sudo htpasswd -c /etc/apache2/.phpmyadmin.htpasswd username
+        </pre>
+        Now you need to restart apache:
+        <pre>
+          sudo service apache2 restart
+        </pre>
+        Now try accessing the site on <code>yourip/phpmyadmin</code><br>
+        A login promt should pop up which asks you for a username and a password.
+        The username is the username you entered when creating te httpasswd file.
+        And the password is the password that you entered.
+      </p>
+    </p>
+  </body>
+</html>

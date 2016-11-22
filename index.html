@@ -3,115 +3,124 @@
   <head>
     <meta charset="utf-8">
     <title>Linux Tutorial</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   </head>
   <body>
-    <h1>Linux Tutorial</h1>
-    <h2>1. Set up Ubuntu Server</h2>
-    <p>
-      Go to <a href="https://www.ubuntu.com/server">https://www.ubuntu.com/server</a> and download the latest version of Ubuntu Server.
-      Create a bootable USB with the image and boot off of it.
-      Follow the set up guide.
-      When you reach the Software selection part pick LAMP server, standard system utilities and OpenSSH server.
-      Install updates with
-      <pre>
-        sudo apt-get update
-        sudo apt-get upgrade
-      </pre>
-    </p>
-
-    <h2>2. Setting up a Docker container</h2>
-    <p>
-      Start by intalling Docker with
-      <pre>
-        sudo apt-get install docker.io
-        sudo usermod -aG docker $(whoami)
-      </pre>
-      And then reboot your machine.
-      Now get the <code>httpd</code> repository.
-      <pre>
-        docker pull httpd
-      </pre>
-      And to create a container running apache.
-      <pre>
-        docker run -d -p 80:80 --name website -v /path/to/html_files:/usr/local/apache2/htdocs/ httpd:2.4
-      </pre>
-      You can now test to see if it worked by going to your IP Address in your browser.
-    </p>
-    <h2>3. Install and set up MySQL and phpMyAdmin</h2>
-    <p>
-      Start by installing MySQL with:
-      <pre>
-        sudo apt-get install mysql
-      </pre>
-      Then secure MySQL by running this command:
-      <pre>
-        sudo mysql_secure_installation
-      </pre>
-      Just follow the steps and you should do ok.
-      <br>
-      Now we have to install phpMyAdmin.
-      What phpMyAdmin does is give you a graphical interface for MySQL which you can view in your browser.
-      Now lets start by installing phpMyAdmin:
-      <pre>
-        sudo apt-get install phpmyadmin apache2-utils
-      </pre>
-      Select Apache2 for the server.
-      Choose yes when asked about wether to configure the database for phpMyAdmin with dbconfig-common
-      Enter the MySQL password when needed
-      Choose a password for phpMyAdmin
-      Next you need to add phpMyadmin to the apache configuration file
-      <pre>
-        sudo nano /etc/apache2/apache2.conf
-      </pre>
-      And add this line
-      <pre>
-        Include /etc/phpmyadmin/apache.conf
-      </pre>
-      Now you need to restart apache
-      <pre>
-        sudo service apache2 restart
-      </pre>
-      You should then be able to acces phpMyAdmin by going to <code>yourip/phpmyadmin</code>
-      <h3>Securing phpMyAdmin - Optional</h3>
+    <div class="container">
+      <h1>Linux Tutorial</h1>
+      <h2>1. Set up Ubuntu Server</h2>
       <p>
-        First you need to set up the .htaccess file
-        <pre>
-          sudo nano /etc/phpmyadmin/apache.conf
-        </pre>
-        Under the directory section, add the line “AllowOverride All” under “Directory Index”, making the section look like this:
-        <pre>
-          &lt;Directory /usr/share/phpmyadmin&gt;
-                  Options FollowSymLinks
-                  DirectoryIndex index.php
-                  AllowOverride All
-                  [...]
-        </pre>
-        Now you need to configure the .htaccess file
-        First you need to create it.
-        <pre>
-          sudo nano /usr/share/phpmyadmin/.htaccess
-        </pre>
-        Now add this lines to the file
-        <pre>
-          AuthType Basic
-          AuthName "Restricted Files"
-          AuthUserFile /etc/apache2/.phpmyadmin.htpasswd
-          Require valid-user
-        </pre>
-        Now you need to create the htpasswd file.
-        Replace "username" with whatever you like.
-        <pre>
-          sudo htpasswd -c /etc/apache2/.phpmyadmin.htpasswd username
-        </pre>
-        Now you need to restart apache:
-        <pre>
-          sudo service apache2 restart
-        </pre>
-        Now try accessing the site on <code>yourip/phpmyadmin</code><br>
-        A login promt should pop up which asks you for a username and a password.
-        The username is the username you entered when creating te httpasswd file.
-        And the password is the password that you entered.
+        Go to <a href="https://www.ubuntu.com/server">https://www.ubuntu.com/server</a> and download the latest version of Ubuntu Server.
+        Create a bootable USB with the image and boot off of it.
+        Follow the set up guide.
+        When you reach the Software selection part pick LAMP server, standard system utilities and OpenSSH server.
+        Install updates with
+        <pre>sudo apt-get update<br>sudo apt-get upgrade</pre>
       </p>
-    </p>
+
+      <h2>2. Setting up a Docker container</h2>
+      <p>
+        Start by intalling Docker with
+        <pre>sudo apt-get install docker.io<br>sudo usermod -aG docker $(whoami)</pre>
+        And then reboot your machine.
+        Now get the <code>httpd</code> repository.
+        <pre>docker pull httpd</pre>
+        And to create a container running apache.
+        <pre>docker run -d -p 80:80 --name website -v /path/to/html_files:/usr/local/apache2/htdocs/ httpd:2.4</pre>
+        You can now test to see if it worked by going to your IP Address in your browser.
+      </p>
+      <h2>3. Install and set up MySQL and phpMyAdmin</h2>
+      <h3>Installing MySQL</h3>
+      <p>
+        Start by installing MySQL with:
+        <pre>sudo apt-get install mysql</pre>
+        Then secure MySQL by running this command:
+        <pre>sudo mysql_secure_installation</pre>
+        Just follow the steps and you should do ok.
+        <br>
+      </br>
+      <h3>Installing phpMyAdmin</h3>
+      <p>
+        Now we have to install phpMyAdmin.
+        What phpMyAdmin does is give you a graphical interface for MySQL which you can view in your browser.
+        Now lets start by installing phpMyAdmin:
+        <pre>sudo apt-get install phpmyadmin apache2-utils</pre>
+        Select Apache2 for the server.
+        Choose yes when asked about wether to configure the database for phpMyAdmin with dbconfig-common
+        Enter the MySQL password when needed
+        Choose a password for phpMyAdmin
+        Next you need to add phpMyadmin to the apache configuration file
+        <pre>sudo nano /etc/apache2/apache2.conf</pre>
+        And add this line
+        <pre>Include /etc/phpmyadmin/apache.conf</pre>
+        Now you need to restart apache
+        <pre>sudo service apache2 restart</pre>
+        You should then be able to acces phpMyAdmin by going to <code>yourip/phpmyadmin</code>
+        <h3>Securing phpMyAdmin - Optional</h3>
+        <p>
+          First you need to set up the .htaccess file
+          <pre>sudo nano /etc/phpmyadmin/apache.conf</pre>
+          Under the directory section, add the line “AllowOverride All” under “Directory Index”, making the section look like this:
+          <pre>&lt;Directory /usr/share/phpmyadmin&gt;<br>        Options FollowSymLinks<br>        DirectoryIndex index.php<br>        AllowOverride All<br>        [...]</pre>
+          Now you need to configure the .htaccess file
+          First you need to create it.
+          <pre>sudo nano /usr/share/phpmyadmin/.htaccess</pre>
+          Now add this lines to the file
+          <pre>AuthType Basic<br>AuthName "Restricted Files"<br>AuthUserFile /etc/apache2/.phpmyadmin.htpasswd<br>Require valid-user</pre>
+          Now you need to create the htpasswd file.
+          Replace "username" with whatever you like.
+          <pre>sudo htpasswd -c /etc/apache2/.phpmyadmin.htpasswd username</pre>
+          Now you need to restart apache:
+          <pre>sudo service apache2 restart</pre>
+          Now try accessing the site on <code>yourip/phpmyadmin</code><br>
+          A login promt should pop up which asks you for a username and a password.
+          The username is the username you entered when creating te httpasswd file.
+          And the password is the password that you entered.
+        </p>
+        <h2>4. Create MySQL Users</h2>
+        <p>
+          Now we are gonna make a script that creates 15 users in MySQL.<br>
+          We start by creating a file. I recommending just creating it on in your home directory.
+          <pre>nano ~/createUser</pre>
+          Now that you have created the file you can copy and paste the sceipt:
+          <pre>for i in {1..15}<br>do<br> mysql -u root -p rootpw -e "CREATE USER 'notandi_$i'@'localhost' IDENTIFIED BY 'password_$i'"<br>done</pre>
+          The <code>-p rootpw</code> is the password you set for the MySQL root user.
+        </p>
+      </p>
+      <h2>5. Creating a table in MySQL</h2>
+      <p>
+        You can create a table in MySQL either through the terminal or you can do it through phpMyAdmin.
+      </p>
+        <h3>Terminal</h3>
+      <p>
+        Start by entering the MySQL shell.
+        <pre>mysql -u root -p</pre>
+        It will ask you for a password.<br>
+        When you're in you can run <a href="https://www.codecademy.com/articles/sql-commands?r=master">SQL commands</a> as you like.
+        But for now we are just gonna create a table.
+        You need to start by creating a database with:
+        <pre>CREATE DATABASE syslogs;<br>USE syslogs</pre>
+        Now you can create the table.
+        <pre>CREATE TABLE Logs (<br>  ID int PRIMARY KEY AUTO_INCREMENT,<br>  Date date,<br>  User varchar(32),<br>  Memory int,<br>  IP varchar(32),<br>  Hostname varchar(32)<br>);</pre>
+      </p>
+      <h2>6. Cron</h2>
+      <p>
+        Now we are gonna create a cronjob that gets the somw information and inserts into a MySQL table every day at noon.<br>
+        Lets start by creating the script that does that.
+        Start by creating the file:
+        <pre>sudo nano /var/log/log</pre>
+        Then copy and paste this code in there:
+        <pre>date=$(date +%Y-%m-%d)<br>user=$(whoami)<br>mem=$(free | awk 'FNR == 2 {print $3}')<br>ip=$(hostname -I | cut -d' ' -f1)<br>host=$(hostname)<br><br>mysql --user=root --password=rootpw syslogs << EOF<br>insert into Logs (Date, User, Memory, IP, Hostname) values('$date', '$user', '$mem', '$ip', '$host');<br>EOF</pre>
+        Now make sure you can run it.
+        <pre>sudo chmod 777 /var/log/log</pre>
+        Now to make this run every day you have to add it to Cron.
+        <pre>crontab -e</pre>
+        It should ask you what editor to use for it and I recommend you use nano.<br>
+        It should open up a file with some text in it, just ignore it for now and go to the bottom of the file and add this line:
+        <pre>0 12 * * * /var/log/log</pre>
+        That should make it run every day at 12:00.
+      </p>
+    </div>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </body>
 </html>

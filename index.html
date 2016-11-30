@@ -8,12 +8,29 @@
   <body>
     <div class="container">
       <h1>Linux Tutorial</h1>
+      <h2>0. Resources</h2>
+      <p>
+        We will be using the following resources:
+      </p>
+      <ul>
+        <li><a href="https://www.ubuntu.com/server">Ubuntu Server 16.04.1</a></li>
+        <li><a href="https://www.docker.com/">Docker 1.12.1</a></li>
+        <li><a href="https://secure.php.net/">PHP 7.0.8</a></li>
+        <li><a href="https://www.apache.org/">Apache 2.4.18</a></li>
+        <li><a href="https://www.phpmyadmin.net/">phpMyAdmin 4.5.4.1</a></li>
+        <li><a href="https://www.mysql.com/">MySQL 5.7.16</a></li>
+      </ul>
       <h2>1. Set up Ubuntu Server</h2>
       <p>
-        Go to <a href="https://www.ubuntu.com/server">https://www.ubuntu.com/server</a> and download the latest version of Ubuntu Server.
-        Create a bootable USB with the image and boot off of it.
-        Follow the set up guide.
-        When you reach the Software selection part pick LAMP server, standard system utilities and OpenSSH server.
+        Go to <a href="https://www.ubuntu.com/server">https://www.ubuntu.com/server</a> and download the latest version of Ubuntu Server.<br>
+        Create a bootable USB with the image and boot off of it.<br>
+        Follow the set up guide.<br>
+        When you reach the Software selection part pick
+        <ul>
+          <li><b>LAMP server</b></li>
+          <li><b>standard system utilities</b></li>
+          <li><b>OpenSSH server</b></li>
+        </ul>
         Install updates with
         <pre>sudo apt-get update<br>sudo apt-get upgrade</pre>
       </p>
@@ -25,7 +42,9 @@
         And then reboot your machine.
         Now get the <code>httpd</code> repository.
         <pre>docker pull httpd</pre>
-        And to create a container running apache.
+        Before we create the container we need to stop Apache because it's taking up the port we need.
+        <pre>sudo service apache2 stop</pre>
+        Now we can create a container running apache.
         <pre>docker run -d -p 80:80 --name website -v /path/to/html_files:/usr/local/apache2/htdocs/ httpd:2.4</pre>
         You can now test to see if it worked by going to your IP Address in your browser.
       </p>
@@ -85,17 +104,17 @@
           Now that you have created the file you can copy and paste the sceipt:
           <pre>for i in {1..15}<br>do<br> mysql -u root -p rootpw -e "CREATE USER 'notandi_$i'@'localhost' IDENTIFIED BY 'password_$i'"<br>done</pre>
           The <code>-p rootpw</code> is the password you set for the MySQL root user.
+          Now you need to make sure you can run the script.
+          <pre>sudo chmod 777 ~/createUser</pre>
+          And now you can run it with:
+          <pre>~/createUser</pre>
         </p>
       </p>
       <h2>5. Creating a table in MySQL</h2>
       <p>
-        You can create a table in MySQL either through the terminal or you can do it through phpMyAdmin.
-      </p>
-        <h3>Terminal</h3>
-      <p>
         Start by entering the MySQL shell.
         <pre>mysql -u root -p</pre>
-        It will ask you for a password.<br>
+        It will ask you for a password. This is the password you set when you installed MySQL<br>
         When you're in you can run <a href="https://www.codecademy.com/articles/sql-commands?r=master">SQL commands</a> as you like.
         But for now we are just gonna create a table.
         You need to start by creating a database with:
